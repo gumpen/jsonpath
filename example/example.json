@@ -1,0 +1,78 @@
+{
+    "Title": "タイトル",
+    "Saunas": [
+        {
+            "Name": "草加健康センター",
+            "Location": "埼玉県",
+            "Closed": [],
+            "BathSections": [
+                {
+                    "Type": "男",
+                    "SaunaRooms": [
+                        {
+                            "People": 28,
+                            "Temperature": 92,
+                            "Tags": [
+                                "ドライ",
+                                "ロウリュ"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "Type": "女",
+                    "SaunaRooms": [
+                        {
+                            "People": 25,
+                            "Temperature": 80,
+                            "Tags": [
+                                "ドライ",
+                                "ロウリュ"
+                            ]
+                        },
+                        {
+                            "People": 4,
+                            "Temperature": 54,
+                            "Tags": [
+                                "スチーム"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Name": "金春湯",
+            "Location": "東京都",
+            "Closed": [
+                "火曜日"
+            ],
+            "BathSections": [
+                {
+                    "Type": "男",
+                    "SaunaRooms": [
+                        {
+                            "People": 6,
+                            "Temperature": 90,
+                            "Tags": [
+                                "ドライ"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "Type": "女",
+                    "SaunaRooms": [
+                        {
+                            "People": 6,
+                            "Temperature": 92,
+                            "Tags": [
+                                "ドライ"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
