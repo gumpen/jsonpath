@@ -1,5 +1,9 @@
 {
     "Title": "タイトル",
+    "Author": {
+        "Name": "gumpen",
+        "ID": 123456
+    },
     "Saunas": [
         {
             "Name": "草加健康センター",

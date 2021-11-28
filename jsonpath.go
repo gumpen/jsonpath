@@ -1,7 +1,6 @@
 package jsonpath
 
 import (
-	"encoding/json"
 	"reflect"
 	"strings"
 )
@@ -38,23 +37,21 @@ func (p *Path) tokenize() error {
 
 func (p *Path) Execute(data interface{}) (interface{}, error) {
 	output, err := p.find(data)
-
-	b, err := json.Marshal(output)
 	if err != nil {
 		return "", err
 	}
 
-	return string(b), nil
+	return output, nil
 }
 
 func (p *Path) find(data interface{}) (interface{}, error) {
-	var result interface{}
+	var result = data
 	for _, t := range p.tokens {
 		switch t {
 		case "$":
 			result = data
 		default:
-			r, err := p.findValue(t, data)
+			r, err := p.findValue(t, result)
 			if err != nil {
 				return nil, err
 			}
