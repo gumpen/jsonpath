@@ -263,6 +263,12 @@ func TestGet(t *testing.T) {
 			input:  d,
 			expect: []string{"草加健康センター", "金春湯"},
 		},
+		{
+			name:   "multi union",
+			query:  "$.Saunas[0,1].BathSections[0,1].Type",
+			input:  d,
+			expect: []string{"男", "女", "男", "女"},
+		},
 	}
 
 	testJSONPath(cases, t)

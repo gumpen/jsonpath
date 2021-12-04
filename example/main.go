@@ -21,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	q := "$.Saunas[0].Name"
+	q := "$.Saunas[0,1].BathSections[0,1].Type"
 	p := jsonpath.NewPath(q)
 	err = p.Parse()
 	if err != nil {
@@ -33,5 +33,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("%#v\n", out)
+	fmt.Printf("%s\n", out)
 }

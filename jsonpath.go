@@ -12,11 +12,13 @@ const separator = "."
 type Path struct {
 	query  string
 	tokens []Token
+	result []interface{}
 }
 
 func NewPath(q string) *Path {
 	return &Path{
-		query: q,
+		query:  q,
+		result: make([]interface{}, 0),
 	}
 }
 
@@ -74,17 +76,52 @@ func (p *Path) tokenize() error {
 }
 
 func (p *Path) Execute(data interface{}) (interface{}, error) {
-	output, err := p.find(data)
+	output, err := p.find(p.tokens, data)
 	if err != nil {
 		return "", err
 	}
 
-	return output, nil
+	result, err := p.format(output)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
 }
 
-func (p *Path) find(data interface{}) (interface{}, error) {
+func (p *Path) format(data interface{}) (interface{}, error) {
+	err := p.makeResult(data)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(p.result) < 1 {
+		return nil, nil
+	} else if len(p.result) == 1 {
+		return p.result[0], nil
+	}
+
+	return p.result, nil
+}
+
+func (p *Path) makeResult(data interface{}) error {
+	if a, ok := data.([]interface{}); ok {
+		for _, b := range a {
+			err := p.makeResult(b)
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		p.result = append(p.result, data)
+	}
+
+	return nil
+}
+
+func (p *Path) find(tokens []Token, data interface{}) (interface{}, error) {
 	var result = data
-	for _, t := range p.tokens {
+	for i, t := range tokens {
 		switch t.Type {
 		case TokenTypeRoot:
 			result = data
@@ -99,7 +136,22 @@ func (p *Path) find(data interface{}) (interface{}, error) {
 				unionResults = append(unionResults, r)
 			}
 
-			result = unionResults
+			if len(tokens) <= i+1 {
+				result = unionResults
+				continue
+			}
+
+			findResults := make([]interface{}, 0)
+			for _, ur := range unionResults {
+				findRes, err := p.find(tokens[i+1:], ur)
+				if err != nil {
+					return nil, err
+				}
+
+				findResults = append(findResults, findRes)
+			}
+
+			return findResults, nil
 		case TokenTypeIndex:
 			r, err := p.findValue(t.Value, result)
 			if err != nil {
