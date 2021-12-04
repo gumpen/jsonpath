@@ -269,49 +269,45 @@ func TestGet(t *testing.T) {
 			input:  d,
 			expect: []string{"男", "女", "男", "女"},
 		},
+		{
+			name:   "slice",
+			query:  "$.Saunas[0:1].Location",
+			input:  d,
+			expect: "埼玉県",
+		},
+		{
+			name:   "slice 2",
+			query:  "$.Saunas[0:2].Location",
+			input:  d,
+			expect: []string{"埼玉県", "東京都"},
+		},
+		{
+			name:   "slice blank start",
+			query:  "$.Saunas[:2].Location",
+			input:  d,
+			expect: []string{"埼玉県", "東京都"},
+		},
+		{
+			name:   "slice blank end",
+			query:  "$.Saunas[1:].Location",
+			input:  d,
+			expect: "東京都",
+		},
+		{
+			name:   "slice blank both",
+			query:  "$.Saunas[:].Location",
+			input:  d,
+			expect: []string{"埼玉県", "東京都"},
+		},
+		{
+			name:   "union and slice",
+			query:  "$.Saunas[0,1].BathSections[:].Type",
+			input:  d,
+			expect: []string{"男", "女", "男", "女"},
+		},
 	}
 
 	testJSONPath(cases, t)
 
 	return
-}
-
-func TestMakeIndexSlice(t *testing.T) {
-	cases := []struct {
-		name   string
-		start  string
-		end    string
-		expect []string
-	}{
-		{
-			name:   "normal",
-			start:  "0",
-			end:    "1",
-			expect: []string{"0"},
-		},
-		{
-			name:   "normal 2",
-			start:  "1",
-			end:    "3",
-			expect: []string{"1", "2"},
-		},
-	}
-
-	for _, c := range cases {
-		r, err := makeIndexSlice(c.start, c.end)
-		if err != nil {
-			t.Error(err)
-		}
-
-		if len(r) != len(c.expect) {
-			t.Error("slice length is not equal")
-			continue
-		}
-
-		for i, s := range c.expect {
-			if s != r[i] {
-				t.Errorf("slice is not equal, get: %s, expect: %s", r, c.expect)
-			}
-		}
-	}
 }

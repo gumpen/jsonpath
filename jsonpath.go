@@ -69,6 +69,7 @@ func (p *Path) tokenize() error {
 		// slice
 		if strings.Contains(exp, ":") {
 			p.tokens = append(p.tokens, Token{Type: TokenTypeSlice, Value: exp})
+			continue
 		}
 
 		p.tokens = append(p.tokens, Token{Type: TokenTypeIndex, Value: s[start+1 : end]})
@@ -158,6 +159,58 @@ func (p *Path) find(tokens []Token, data interface{}) (interface{}, error) {
 
 			return findResults, nil
 		case TokenTypeSlice:
+			indices := strings.Split(t.Value, ":")
+			start := indices[0]
+			end := indices[1]
+
+			if start == "" {
+				start = "0"
+			}
+			if end == "" {
+				if r, ok := result.([]interface{}); ok {
+					max := len(r)
+					end = strconv.Itoa(max)
+				} else {
+					return nil, fmt.Errorf("invalid slice value")
+				}
+			}
+
+			starti, err := strconv.Atoi(start)
+			if err != nil {
+				return nil, err
+			}
+
+			endi, err := strconv.Atoi(end)
+			if err != nil {
+				return nil, err
+			}
+
+			sliceResults := make([]interface{}, 0)
+			for j := starti; j < endi; j++ {
+				s := strconv.Itoa(j)
+				r, err := p.findValue(s, result)
+				if err != nil {
+					return nil, err
+				}
+				sliceResults = append(sliceResults, r)
+			}
+
+			if len(tokens) <= i+1 {
+				result = sliceResults
+				continue
+			}
+
+			findResults := make([]interface{}, 0)
+			for _, ur := range sliceResults {
+				findRes, err := p.find(tokens[i+1:], ur)
+				if err != nil {
+					return nil, err
+				}
+
+				findResults = append(findResults, findRes)
+			}
+
+			return findResults, nil
 
 		case TokenTypeIndex:
 			r, err := p.findValue(t.Value, result)
@@ -220,22 +273,4 @@ func (p *Path) findValue(q string, data interface{}) (interface{}, error) {
 	}
 
 	return nil, nil
-}
-
-func makeIndexSlice(start, end string) ([]string, error) {
-	res := []string{}
-	si, err := strconv.Atoi(start)
-	if err != nil {
-		return res, err
-	}
-	ei, err := strconv.Atoi(end)
-	if err != nil {
-		return res, err
-	}
-
-	for i := si; i < ei; i++ {
-		res = append(res, strconv.Itoa(i))
-	}
-
-	return res, nil
 }

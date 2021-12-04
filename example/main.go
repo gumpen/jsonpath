@@ -21,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	q := "$.Saunas[0,1].BathSections[:].Type"
+	q := "$.Saunas[:].Location"
 	p := jsonpath.NewPath(q)
 	err = p.Parse()
 	if err != nil {
