@@ -1,11 +1,12 @@
 package jsonpath
 
-type TokenType string
+type TokenType int
 
 const (
-	TokenTypeRoot  TokenType = "root"
-	TokenTypeIndex TokenType = "index"
-	TokenTypeKey   TokenType = "key"
+	TokenTypeRoot TokenType = iota
+	TokenTypeIndex
+	TokenTypeKey
+	TokenTypeUnion
 )
 
 type Token struct {

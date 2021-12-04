@@ -2,6 +2,7 @@ package jsonpath
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 )
 
@@ -200,6 +201,13 @@ type testCase struct {
 
 func testJSONPath(cases []testCase, t *testing.T) {
 	for _, c := range cases {
+		defer func() {
+			err := recover()
+			if err != nil {
+				t.Errorf("test %s error: Recover!:%s", c.name, err)
+			}
+		}()
+
 		p := NewPath(c.query)
 		err := p.Parse()
 		if err != nil {
@@ -211,7 +219,10 @@ func testJSONPath(cases []testCase, t *testing.T) {
 			t.Error(err)
 		}
 
-		if output != c.expect {
+		sOutput := fmt.Sprint(output)
+		sExpect := fmt.Sprint(c.expect)
+
+		if sOutput != sExpect {
 			t.Errorf("test %s error: output %s should be expected %s", c.name, output, c.expect)
 		}
 
@@ -245,6 +256,12 @@ func TestGet(t *testing.T) {
 			query:  "$.Saunas[0].Name",
 			input:  d,
 			expect: "草加健康センター",
+		},
+		{
+			name:   "union",
+			query:  "$.Saunas[0,1].Name",
+			input:  d,
+			expect: []string{"草加健康センター", "金春湯"},
 		},
 	}
 
