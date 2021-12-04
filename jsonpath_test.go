@@ -240,6 +240,12 @@ func TestGet(t *testing.T) {
 			input:  d,
 			expect: float64(123456), // goでJSONのnumberはfloat64型になる
 		},
+		{
+			name:   "index access",
+			query:  "$.Saunas[0].Name",
+			input:  d,
+			expect: "草加健康センター",
+		},
 	}
 
 	testJSONPath(cases, t)
