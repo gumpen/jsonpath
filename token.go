@@ -7,6 +7,7 @@ const (
 	TokenTypeIndex
 	TokenTypeKey
 	TokenTypeUnion
+	TokenTypeSlice
 )
 
 type Token struct {

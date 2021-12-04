@@ -66,6 +66,11 @@ func (p *Path) tokenize() error {
 			continue
 		}
 
+		// slice
+		if strings.Contains(exp, ":") {
+			p.tokens = append(p.tokens, Token{Type: TokenTypeSlice, Value: exp})
+		}
+
 		p.tokens = append(p.tokens, Token{Type: TokenTypeIndex, Value: s[start+1 : end]})
 
 	}
@@ -152,6 +157,8 @@ func (p *Path) find(tokens []Token, data interface{}) (interface{}, error) {
 			}
 
 			return findResults, nil
+		case TokenTypeSlice:
+
 		case TokenTypeIndex:
 			r, err := p.findValue(t.Value, result)
 			if err != nil {
@@ -213,4 +220,22 @@ func (p *Path) findValue(q string, data interface{}) (interface{}, error) {
 	}
 
 	return nil, nil
+}
+
+func makeIndexSlice(start, end string) ([]string, error) {
+	res := []string{}
+	si, err := strconv.Atoi(start)
+	if err != nil {
+		return res, err
+	}
+	ei, err := strconv.Atoi(end)
+	if err != nil {
+		return res, err
+	}
+
+	for i := si; i < ei; i++ {
+		res = append(res, strconv.Itoa(i))
+	}
+
+	return res, nil
 }

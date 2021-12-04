@@ -275,3 +275,43 @@ func TestGet(t *testing.T) {
 
 	return
 }
+
+func TestMakeIndexSlice(t *testing.T) {
+	cases := []struct {
+		name   string
+		start  string
+		end    string
+		expect []string
+	}{
+		{
+			name:   "normal",
+			start:  "0",
+			end:    "1",
+			expect: []string{"0"},
+		},
+		{
+			name:   "normal 2",
+			start:  "1",
+			end:    "3",
+			expect: []string{"1", "2"},
+		},
+	}
+
+	for _, c := range cases {
+		r, err := makeIndexSlice(c.start, c.end)
+		if err != nil {
+			t.Error(err)
+		}
+
+		if len(r) != len(c.expect) {
+			t.Error("slice length is not equal")
+			continue
+		}
+
+		for i, s := range c.expect {
+			if s != r[i] {
+				t.Errorf("slice is not equal, get: %s, expect: %s", r, c.expect)
+			}
+		}
+	}
+}
